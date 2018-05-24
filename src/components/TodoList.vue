@@ -1,21 +1,29 @@
 <template>
     <div class="container">
         <div class="options">
-        <span class="remaining-todos">{{remaining}} task remaining</span>
-        <span class="remaining-todos">
-        <input class="done-todo" :checked = "!taskRemaining" type="checkbox"
-        @change="checkAll(todo, $event)">
-        Complete All</span>
-</div>
+            <span class="remaining-todos">{{remaining}} task remaining</span>
+            <span class="remaining-todos">
+            <input class="done-todo" :checked = "!taskRemaining" type="checkbox"
+            @change="checkAll(todo, $event)">
+            Complete All</span>
+        </div>
 
         <input class="todo-input" type="text" placeholder="Add a new task"
         v-model="newToDo" @keyup.enter="addTodo">
-        <div class="todo"  v-if="!todo.editing" v-for="(todo,index) in todos" v-bind:key="todo.id" @dblclick="editToDo(todo)"> 
+        <div class="todo"  v-if="!todo.editing" v-for="(todo,index) in todosFiltered" v-bind:key="todo.id" @dblclick="editToDo(todo)"> 
             <input class="done-todo" type="checkbox" v-model="todo.done">
             <span :class="{doneTask:todo.done}" >{{todo.title}}</span>
             <span class="remove-todo" @click="removeToDo(index)" > X </span>  
         </div>
-        <input type="text" v-else class="edit-todo"  v-model="todo.title" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)" v-focus>
+        <div v-else class="editing edit-todo">Editing: <input type="text"  class="edit-todo"  v-model="todo.title" @blur="doneEdit(todo)" @keyup.enter="doneEdit(todo)" @keyup.esc="cancelEdit(todo)" v-focus>
+        </div>
+        <div class="options">
+            <button class="all" :class="{active : filter == 'all'}" @click="filter = 'all'"> All</button>
+            <button class="remaining"  :class="{active : filter == 'remaining'}" @click="filter = 'remaining'" >Remaining</button>
+            <button class="completed" :class="{active : filter == 'completed'}" @click="filter = 'completed'" >Completed</button>
+            <button class="completed" @click="clearCompleted" >Clear Completed</button>
+
+        </div>
     </div> 
 </template>
 
@@ -27,6 +35,7 @@ export default {
       newTodo: "",
       idForTodo: 0,
       editCache: "",
+      filter: "all",
       todos: [
         {
           id: 1,
@@ -85,8 +94,10 @@ export default {
       todo.editing = false;
     },
     checkAll(todo, event) {
-      console.log(event.target.checked);
       this.todos.forEach(todo => (todo.done = event.target.checked));
+    },
+    clearCompleted(){
+        this.todos = this.todos.filter(todo => !todo.done)
     }
   },
   computed: {
@@ -95,6 +106,19 @@ export default {
     },
     taskRemaining() {
       return this.remaining != 0;
+    },
+    todosFiltered() {
+      switch (this.filter) {
+        default:
+          return this.todos;
+          break;
+        case "remaining":
+          return this.todos.filter(todo => !todo.done);
+          break;
+        case "completed":
+          return this.todos.filter(todo => todo.done);
+          break;
+      }
     }
   }
 };
@@ -119,13 +143,14 @@ export default {
     display: flex;
     align-items: center;
   }
+  .active {
+    background: palegreen;
+  }
 }
 .todo-input {
-  border-radius: 0px;
   padding: 15px;
   margin: 15px;
   font-size: 20px;
-
   &:focus {
     outline: 0;
   }
