@@ -8,17 +8,10 @@
             Complete All</span>
         </div>
 
-        <input class="todo-input" type="text" placeholder="Add a new task"
+<div class="input-container">
+   <input class="todo-input" type="text" placeholder="Add a new task"
         v-model="newToDo" @keyup.enter="addTodo">
-
-        <transition-group enter-active-class="animated bounceInDown" leave-active-class="animated bounceOutUp">
-
-        <todo-list-item  v-for="todo in todosFiltered" 
-        v-bind:key="todo.id" :todo="todo" :checkAll="!taskRemaining"
-         @removeToDo="removeToDo" @finishedEdit="finishedEdit"/> 
-        </transition-group>
-
-        <div class="options bottom">
+         <div class="options bottom">
 
             <transition class="clearme" enter-active-class="animated fadeIn" 
             leave-active-class="animated fadeOut" name="fade">
@@ -34,6 +27,17 @@
             @click="filter = 'completed'" >Completed</button>
       
         </div>
+</div>
+       
+
+        <transition-group enter-active-class="animated bounceInDown" leave-active-class="animated bounceOutUp">
+
+        <todo-list-item  v-for="todo in todosFiltered" 
+        v-bind:key="todo.id" :todo="todo" :checkAll="!taskRemaining"
+         @removeToDo="removeToDo" @finishedEdit="finishedEdit"/> 
+        </transition-group>
+
+       
     </div> 
 </template>
 
@@ -62,7 +66,7 @@ export default {
         this.todos.push({
           id: this.idForTodo,
           title: this.newToDo,
-          done: false,
+          done: false
         });
         this.newToDo = "";
         this.idForTodo += 1;
@@ -76,7 +80,7 @@ export default {
       this.todos.splice(index, 1);
     },
     checkAll(event) {
-      this.todos.forEach((todo) => todo.done = event.target.checked);
+      this.todos.forEach(todo => (todo.done = event.target.checked));
     },
     clearCompleted() {
       this.todos = this.todos.filter(todo => !todo.done);
@@ -122,18 +126,20 @@ export default {
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   padding: 15px;
+  min-height: 400px;
 }
 
 .options {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid #e0e0e0;
+  
 
   &.bottom {
-    justify-content: end;
+    display: grid;
+    grid-template-columns: 1fr 1fr ;
+  grid-auto-flow: row dense;
+  grid-gap: 15px;
     button {
-      margin: 0px 10px;
       border: 0px;
       padding: 10px;
       border-radius: 5px;
@@ -153,8 +159,10 @@ export default {
 }
 .todo-input {
   padding: 15px;
-  margin: 15px;
+  margin: 15px 0px;
   font-size: 20px;
+  color: #42b883;
+  width: 100%;
   &:focus {
     outline: 0;
   }
@@ -166,5 +174,14 @@ export default {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 24px;
   border: 0px;
+}
+
+.input-container{
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+  padding-bottom: 15px;
+  margin: 15px 15px  30px 15px;
+  border-bottom: 1px solid #e0e0e0;
 }
 </style>

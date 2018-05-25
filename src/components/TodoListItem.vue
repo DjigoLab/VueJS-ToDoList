@@ -1,7 +1,8 @@
 <template>
     <div class="todo" v-if="!editing"   @dblclick="editToDo(todo) ">
         <input class="done-todo" type="checkbox" v-model="done" @change="doneEdit" >
-        <span :class="{doneTask:done}" >{{title}}</span>
+        <span class="task-info"
+        :class="{doneTask:done}" >{{title}}</span>
         <span class="remove-todo" @click="removeToDo(id)" > X </span>
     </div>
     <div v-else class="editing edit-todo">Editing:
@@ -80,15 +81,23 @@ export default {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 24px;
   display: grid;
-  grid-auto-columns: min-content;
   animation-duration: 0.4s;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 10fr 1fr;
+border-bottom: 1px solid #e0e0e0;
+padding-bottom: 10px;
+
   .remove-todo {
     grid-column: 3/4;
-    justify-self: end;
+    justify-self: center;
+    color: #42b883;
   }
   .done-todo {
-    justify-self: start;
+    justify-self: center;
+    color: #42b883;
+  }
+  .task-info {
+   
+    padding-left: 15px;
   }
 
   .doneTask {

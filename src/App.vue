@@ -1,6 +1,5 @@
 <template>
-  <div id="app" class="container">
-    <img src="./assets/logo.png" class="logo">
+  <div id="app" class="container-app">
     
     <todo-list></todo-list>
   </div>
@@ -21,16 +20,7 @@ export default {
   box-sizing: border-box;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  display: grid;
-  justify-content: center;
 
-  img {
-    justify-self: center;
-  }
-}
 </style>
 
 
