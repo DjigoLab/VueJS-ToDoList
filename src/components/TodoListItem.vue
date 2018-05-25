@@ -2,12 +2,12 @@
     <div class="todo" v-if="!editing"   @dblclick="editToDo(todo) ">
         <input class="done-todo" type="checkbox" v-model="done" @change="doneEdit" >
         <span :class="{doneTask:done}" >{{title}}</span>
-        <span class="remove-todo" @click="removeToDo(index)" > X </span>
+        <span class="remove-todo" @click="removeToDo(id)" > X </span>
     </div>
     <div v-else class="editing edit-todo">Editing:
         <input type="text"  class="edit-todo"
-        v-model="title" @blur="doneEdit()" @keyup.enter="doneEdit()"
-         @keyup.esc="cancelEdit()" v-focus>
+        v-model="title" @blur="doneEdit" @keyup.enter="doneEdit"
+         @keyup.esc="cancelEdit" v-focus>
         </div>
 </template>
 
@@ -19,13 +19,14 @@ export default {
       type: Object,
       required: true
     },
-    index: {
-      type: Number,
-      required: true
-    },
     checkAll: {
       type: Boolean,
       required: true
+    }
+  },
+  watch: {
+    checkAll() {
+      this.done = this.checkAll ? true : this.todo.done;
     }
   },
   directives: {
@@ -33,14 +34,6 @@ export default {
       inserted: function(el) {
         el.focus();
       }
-    }
-  },
-  watch: {
-    checkAll() {
-      if (this.checkAll) 
-        this.done = true;
-      else
-        this.done = this.todo.done;
     }
   },
   data() {
@@ -65,19 +58,15 @@ export default {
       if (this.title.trim().length == 0) {
         this.title = this.editCache;
         alert("You cannot leave an empty task!");
-      }  
-        this.editing = false;
-        this.$emit("finishedEdit", {
-          index: this.index,
-          todo: {
-            id: this.id,
-            title: this.title,
-            done: this.done,
-            editing: this.editing
-          }
-        })
       }
-    ,
+      this.editing = false;
+      this.$emit("finishedEdit", {
+        id: this.id,
+        title: this.title,
+        done: this.done,
+        editing: this.editing
+      });
+    },
     cancelEdit() {
       this.title = this.editCache;
       this.editing = false;
@@ -86,7 +75,6 @@ export default {
 };
 </script>
 <style lang="scss">
-
 .todo {
   margin: 15px;
   font-family: Arial, Helvetica, sans-serif;

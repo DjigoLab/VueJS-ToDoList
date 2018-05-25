@@ -3,8 +3,8 @@
         <div class="options">
             <span class="remaining-todos">{{remaining}} task remaining</span>
             <span class="remaining-todos">
-            <input class="done-todo" :checked = "!taskRemaining" type="checkbox"
-            @change="checkAll">
+            <input class="done-todo" :checked="!taskRemaining" type="checkbox"
+            @change="checkAll($event)">
             Complete All</span>
         </div>
 
@@ -13,8 +13,8 @@
 
         <transition-group enter-active-class="animated bounceInDown" leave-active-class="animated bounceOutUp">
 
-        <todo-list-item  v-for="(todo,index) in todosFiltered" 
-        v-bind:key="todo.id" :todo="todo" :index="index" :checkAll="!anyRemaining"
+        <todo-list-item  v-for="todo in todosFiltered" 
+        v-bind:key="todo.id" :todo="todo" :checkAll="!taskRemaining"
          @removeToDo="removeToDo" @finishedEdit="finishedEdit"/> 
         </transition-group>
 
@@ -51,9 +51,8 @@ export default {
       idForTodo: 0,
       editCache: "",
       filter: "all",
-      acti: false,
-      todos: [
-      ]
+      todos: [],
+      anyRemaining: Boolean
     };
   },
 
@@ -64,7 +63,6 @@ export default {
           id: this.idForTodo,
           title: this.newToDo,
           done: false,
-          editing: false
         });
         this.newToDo = "";
         this.idForTodo += 1;
@@ -73,17 +71,19 @@ export default {
         alert("Please add a message to your task");
       }
     },
-    removeToDo(index) {
+    removeToDo(id) {
+      const index = this.todos.findIndex(item => item.id == id);
       this.todos.splice(index, 1);
     },
-    checkAll() {
+    checkAll(event) {
       this.todos.forEach((todo) => todo.done = event.target.checked);
     },
     clearCompleted() {
       this.todos = this.todos.filter(todo => !todo.done);
     },
     finishedEdit(data) {
-      this.todos.splice(data.index, 1, data.todo);
+      const index = this.todos.findIndex(item => item.id == data.id);
+      this.todos.splice(index, 1, data);
     }
   },
   computed: {
@@ -167,5 +167,4 @@ export default {
   font-size: 24px;
   border: 0px;
 }
-
 </style>
